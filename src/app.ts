@@ -3,6 +3,7 @@ import { router } from "./app/routes"
 import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
+import { globalErrorHandle } from "./app/middlewares/globalErrorHandler"
 
 export const app = express()
 
@@ -15,3 +16,5 @@ app.use('api/v1', router)
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to Ride Booking Application')
 })
+
+app.use(globalErrorHandle)
