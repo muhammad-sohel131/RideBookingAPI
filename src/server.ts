@@ -2,6 +2,7 @@ import mongoose from "mongoose"
 import { envVars } from "./app/config/env"
 import { Server } from "http"
 import { app } from "./app"
+import { seedSuperAdmin } from "./app/utils/seedSuperAdmin"
 
 let server: Server
 
@@ -10,7 +11,7 @@ const startServer = async() => {
     await mongoose.connect(envVars.DB_URL)
     console.log('Connected to DB')
 
-    server = app.listen(3000, () => {
+    server = app.listen(envVars.PORT, () => {
       console.log(`Server is listening to port 3000`)
     })
   }catch(err){
@@ -20,4 +21,5 @@ const startServer = async() => {
 
 (async () => {
   await startServer()
+  seedSuperAdmin()
 })()
