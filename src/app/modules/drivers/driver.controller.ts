@@ -28,6 +28,17 @@ const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const getRequestedDrivers = catchAsync(async (req: Request, res: Response) => {
+    const drivers = await driverService.getRequestedDrivers()
+
+    sendResponse(res, {
+        message: "Retrieved All Requested Drivers",
+        success: true,
+        statusCode: httpStatus.OK,
+        data: drivers
+    })
+})
+
 const updateDriver = catchAsync(async (req: Request, res: Response) => {
     const userId = req.params.userId
     const updatedDriver = await driverService.updateDriver(userId, req.body)
@@ -42,5 +53,6 @@ const updateDriver = catchAsync(async (req: Request, res: Response) => {
 export const driverController = {
     registerDriver,
     getAllDrivers,
-    updateDriver
+    updateDriver,
+    getRequestedDrivers
 }

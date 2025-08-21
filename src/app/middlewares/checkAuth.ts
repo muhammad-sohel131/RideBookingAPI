@@ -26,7 +26,7 @@ export const checkAuth = (...roles : string[]) => async(req: Request, res: Respo
         throw new AppError(httpStatus.NOT_FOUND, "User does not exist")
     }
 
-
+    verifiedToken.role = isUserExist.role
     if(!roles.includes(verifiedToken.role)){
       throw new AppError(403, "You are not permitted to this route!!!")
     }
