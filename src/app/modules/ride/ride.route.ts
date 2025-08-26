@@ -26,5 +26,5 @@ router.get(
   "/",
   rideController.getRides
 );
-router.get("/requested-rides", rideController.getRides);
+router.get("/requested-rides",checkAuth(Role.DRIVER), rideController.getRequestedRides);
 export const rideRoutes = router;

@@ -32,7 +32,6 @@ const getRides = catchAsync(async(req: Request, res: Response) => {
 const getRequestedRides = catchAsync(async(req: Request, res: Response) => {
     const ride = await rideService.getRequestedRides()
 
-
     sendResponse(res, {
         statusCode: httpStatus.OK,
         message: 'Retrieved Requested Rides.',

@@ -50,9 +50,22 @@ const updateDriver = catchAsync(async (req: Request, res: Response) => {
         data: updatedDriver
     })
 })
+
+const approveDriver = catchAsync(async (req: Request, res: Response) => {
+    const userId = req.params.userId
+    const updatedDriver = await driverService.approveDriver(userId)
+
+    sendResponse(res, {
+        message: "Driver's info updated.",
+        success: true,
+        statusCode: httpStatus.OK,
+        data: updatedDriver
+    })
+})
 export const driverController = {
     registerDriver,
     getAllDrivers,
     updateDriver,
-    getRequestedDrivers
+    getRequestedDrivers,
+    approveDriver
 }
