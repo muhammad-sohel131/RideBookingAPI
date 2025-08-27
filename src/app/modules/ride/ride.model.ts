@@ -10,7 +10,7 @@ const RideSchema = new Schema<IRide>(
     },
     driver: {
       type: Schema.Types.ObjectId,
-      ref: 'Driver'
+      ref: 'User'
     },
     pickupLocation: {
       lat: { type: Number, required: true },

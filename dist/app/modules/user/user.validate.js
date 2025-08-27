@@ -6,5 +6,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUserSchema = void 0;
 const zod_1 = __importDefault(require("zod"));
 exports.updateUserSchema = zod_1.default.object({
-    isBlocked: zod_1.default.boolean,
+    isBlocked: zod_1.default.boolean(),
 });

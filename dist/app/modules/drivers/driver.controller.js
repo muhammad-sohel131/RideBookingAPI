@@ -55,9 +55,20 @@ const updateDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0
         data: updatedDriver
     });
 }));
+const approveDriver = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.params.userId;
+    const updatedDriver = yield driver_service_1.driverService.approveDriver(userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        message: "Driver's info updated.",
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        data: updatedDriver
+    });
+}));
 exports.driverController = {
     registerDriver,
     getAllDrivers,
     updateDriver,
-    getRequestedDrivers
+    getRequestedDrivers,
+    approveDriver
 };

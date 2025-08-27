@@ -5,6 +5,8 @@ import { User } from "../user/user.model";
 import { IDriver, STATUS } from "./driver.interface";
 import { Driver } from "./driver.model";
 import httpStatus from "http-status-codes";
+import { Ride } from "../ride/ride.model";
+import { RideStatus } from "../ride/ride.interface";
 
 const registerDriver = async (userId: string, payload: Partial<IDriver>) => {
   const { licenseNumber, vehicleType, vehicleModel, vehiclePlate, location } =
@@ -56,7 +58,14 @@ const getAllDrivers = async () => {
 
   return drivers;
 };
+const getMyEarnings = async(userId: string) => {
+  const earningsHistory = await Ride.find({
+    driver: userId,
+    status: RideStatus.COMPLETED
+  })
 
+  return earningsHistory
+}
 const getRequestedDrivers = async () => {
   const drivers = await Driver.find({ status: STATUS.PENDING }).populate({
     path: "user",
@@ -85,10 +94,13 @@ const updateDriver = async (userId: string, payload: Partial<IDriver>) => {
 };
 
 const approveDriver = async (userId: string) => {
-  const updatedDriver = await Driver.findByIdAndUpdate(
-    userId,
+  const updatedDriver = await Driver.findOneAndUpdate(
+    {
+      user: userId
+    },
     {
       status: STATUS.APPROVED,
+      isAvailable: true
     },
     {
       new: true,
@@ -112,4 +124,5 @@ export const driverService = {
   updateDriver,
   getRequestedDrivers,
   approveDriver,
+  getMyEarnings
 };

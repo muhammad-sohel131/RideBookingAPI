@@ -24,7 +24,13 @@ router.patch(
 
 router.get(
   "/",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   rideController.getRides
 );
-router.get("/requested-rides",checkAuth(Role.DRIVER), rideController.getRequestedRides);
+router.get("/my-rides", checkAuth(Role.RIDER), rideController.getMyRides);
+router.get(
+  "/requested-rides",
+  checkAuth(Role.DRIVER),
+  rideController.getRequestedRides
+);
 export const rideRoutes = router;

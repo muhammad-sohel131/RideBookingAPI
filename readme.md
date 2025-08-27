@@ -15,6 +15,8 @@ This project is the backend for a ride-sharing application. It allows:
 
 ---
 
+baseurl: https://ride-booking-api-ecru.vercel.app
+
 ## ✨ Features
 
 - 🔐 **Authentication & Authorization** (JWT, Refresh Token, Google OAuth)
@@ -50,43 +52,43 @@ This project is the backend for a ride-sharing application. It allows:
 ### 🔑 Auth
 | Method | Endpoint               | Description              |
 |--------|------------------------|--------------------------|
-| POST   | `/api/auth/register`   | Register new rider       |
-| POST   | `/api/auth/login`      | Login                    |
-| POST   | `/api/auth/refresh-token` | Refresh access token   |
-| POST   | `/api/auth/logout`     | Logout                   |
-| POST   | `/api/auth/reset-password` | Reset password (auth) |
-| GET    | `/api/auth/google`     | Google login             |
-| GET    | `/api/auth/google/callback` | Google OAuth callback |
+| POST   | `/api/v1/auth/register`   | Register new rider       |
+| POST   | `/api/v1/auth/login`      | Login                    |
+| POST   | `/api/v1/auth/refresh-token` | Refresh access token   |
+| POST   | `/api/v1/auth/logout`     | Logout                   |
+| POST   | `/api/v1/auth/reset-password` | Reset password (auth) |
+| GET    | `/api/v1/auth/google`     | Google login             |
+| GET    | `/api/v1/auth/google/callback` | Google OAuth callback |
 
 ---
 
 ### 👤 Users
 | Method | Endpoint                  | Description             |
 |--------|---------------------------|-------------------------|
-| GET    | `/api/user`               | Get all users (admin)   |
-| POST   | `/api/user/register`      | Register user           |
-| PATCH  | `/api/user/status/:userId` | Change user status     |
+| GET    | `/api/v1/user`               | Get all users (admin)   |
+| POST   | `/api/v1/user/register`      | Register user           |
+| PATCH  | `/api/v1/user/status/:userId` | Change user status     |
 
 ---
 
 ### 🚗 Drivers
 | Method | Endpoint                     | Description                |
 |--------|------------------------------|----------------------------|
-| GET    | `/api/driver`                | Get all drivers (admin)    |
-| GET    | `/api/driver/pending-driver` | Get pending driver requests |
-| POST   | `/api/driver/register`       | Apply as driver (rider)    |
-| PATCH  | `/api/driver/approve/:userId` | Approve driver    |
-| PATCH  | `/api/driver/:userId`        | Update driver details      |
+| GET    | `/api/v1/driver`                | Get all drivers (admin)    |
+| GET    | `/api/v1/driver/pending-driver` | Get pending driver requests |
+| POST   | `/api/v1/driver/register`       | Apply as driver (rider)    |
+| PATCH  | `/api/v1/driver/approve/:userId` | Approve driver    |
+| PATCH  | `/api/v1/driver/:userId`        | Update driver details      |
 
 ---
 
 ### 🚕 Rides
 | Method | Endpoint                   | Description                |
 |--------|----------------------------|----------------------------|
-| GET    | `/api/ride`                | Get all rides              |
-| GET    | `/api/ride/requested-rides`| Get rides requested (driver) |
-| POST   | `/api/ride/create`         | Create new ride (rider)    |
-| PATCH  | `/api/ride/update/:rideId` | Update ride status         |
+| GET    | `/api/v1/ride`                | Get all rides              |
+| GET    | `/api/v1/ride/requested-rides`| Get rides requested (driver) |
+| POST   | `/api/v1/ride/create`         | Create new ride (rider)    |
+| PATCH  | `/api/v1/ride/update/:rideId` | Update ride status (Accept, Cancel..)        |
 
 ---
 

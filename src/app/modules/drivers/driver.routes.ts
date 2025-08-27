@@ -22,6 +22,8 @@ router.get(
   driverController.getRequestedDrivers
 );
 
+router.get("/my-earnings", checkAuth(Role.DRIVER), driverController.getMyEarnings)
+
 router.post(
   "/register",
   validateRequest(createDriverZodSchema),

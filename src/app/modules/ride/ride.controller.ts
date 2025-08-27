@@ -9,7 +9,6 @@ import AppError from "../../helpers/AppError";
 
 const createRide = catchAsync(async(req: Request, res: Response) => {
     const user = req.user as JwtPayload
-    console.log(user.role)
     const ride = await rideService.createRide(user.userId, req.body)
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
@@ -40,6 +39,18 @@ const getRequestedRides = catchAsync(async(req: Request, res: Response) => {
     })
 })
 
+const getMyRides = catchAsync(async(req: Request, res: Response) => {
+    const user = req.user as JwtPayload
+    const myRides = await rideService.getMyRides(user.userId)
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        message: 'Retrieved My Rides.',
+        success: true,
+        data: myRides
+    })
+})
+
 const updateRide = catchAsync(async(req: Request, res: Response) => {
     const rideId = req.params.rideId
     const user = req.user as JwtPayload
@@ -59,5 +70,6 @@ export const rideController = {
     createRide,
     getRides,
     updateRide,
-    getRequestedRides
+    getRequestedRides,
+    getMyRides
 }

@@ -41,7 +41,25 @@ const userSchema = new Schema<IUser>({
     },
     auths: {
         type: [authProviderSchema]
+    },
+    currentRide: {
+       type: Schema.Types.ObjectId || null,
+       ref: 'Ride',
+       default: null
     }
-})
+}, {
+    toJSON: {
+      transform: (_doc, ret: any) => {
+        delete ret.password; 
+        return ret;
+      },
+    },
+    toObject: {
+      transform: (_doc, ret: any) => {
+        delete ret.password;
+        return ret;
+      },
+    },
+  })
 
 export const User = model<IUser>('User', userSchema)

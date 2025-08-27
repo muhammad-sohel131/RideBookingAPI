@@ -20,6 +20,10 @@ const createRide = async (userId: Types.ObjectId, payload: Partial<IRide>) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Your account is blocked.')
   }
 
+  if(user.currentRide){
+    throw new AppError(httpStatus.BAD_REQUEST, "You can not request for multiple rides at the same time.")
+  }
+
   const distance = getDistanceInKm(
     payload.pickupLocation as Location,
     payload.dropLocation as Location
@@ -27,6 +31,9 @@ const createRide = async (userId: Types.ObjectId, payload: Partial<IRide>) => {
   payload.fare = 50 * distance;
   payload.rider = userId;
   const ride = await Ride.create(payload);
+  await User.findByIdAndUpdate(userId, {
+    currentRide: ride._id
+  })
   return ride;
 };
 
@@ -39,6 +46,12 @@ const getRequestedRides = async () => {
   const rides = await Ride.find({status: RideStatus.REQUESTED});
   return rides;
 };
+
+const getMyRides = async (userId: string) => {
+  const myRides = await Ride.find({rider: userId})
+
+  return myRides
+}
 
 const updateRideStatus = async ({
   rideId,
@@ -80,8 +93,13 @@ const updateRideStatus = async ({
       { new: true }
     );
 
+    await User.findByIdAndUpdate(user.userId, {
+      currentRide: null
+    })
+
     return updatedRide;
   }
+
 
   const driver = await Driver.findOne({ user: user.userId });
   if (!driver) {
@@ -102,9 +120,9 @@ const updateRideStatus = async ({
       );
     }
 
-    await Driver.findByIdAndUpdate(driver._id, { currentRide: ride._id });
+    await Driver.findByIdAndUpdate(driver._id, { currentRide: ride._id, isAvailable: false });
     await Ride.findByIdAndUpdate(rideId, {
-      driver: driver._id,
+      driver: user.userId,
       status: RideStatus.ACCEPTED,
       acceptedAt: Date.now(),
     });
@@ -117,11 +135,14 @@ const updateRideStatus = async ({
         "You are not allowed for this action."
       );
     }
-    await Driver.findByIdAndUpdate(driver._id, { currentRide: null });
+    await Driver.findByIdAndUpdate(driver._id, { currentRide: null, isAvailable: true });
     await Ride.findByIdAndUpdate(rideId, {
       status: RideStatus.CANCELLED,
       cancelledAt: Date.now(),
     });
+    await User.findByIdAndUpdate(ride.rider, {
+      currentRide: null
+    })
   }
 
   if (newRideStatus === RideStatus.COMPLETED) {
@@ -131,11 +152,14 @@ const updateRideStatus = async ({
         "You are not allowed for this action."
       );
     }
-    await Driver.findByIdAndUpdate(user.userId, { currentRide: null });
+    await Driver.findByIdAndUpdate(user.userId, { currentRide: null, isAvailable: true });
     await Ride.findByIdAndUpdate(rideId, {
       status: RideStatus.COMPLETED,
       completedAt: Date.now(),
     });
+    await User.findByIdAndUpdate(ride.rider, {
+      currentRide: null
+    })
   }
 
   if (newRideStatus === RideStatus.STARTED) {
@@ -160,5 +184,6 @@ export const rideService = {
   createRide,
   getRides,
   updateRideStatus,
-  getRequestedRides
+  getRequestedRides,
+  getMyRides
 };

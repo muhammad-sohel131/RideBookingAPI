@@ -31,53 +31,67 @@ const registerDriver = (userId, payload) => __awaiter(void 0, void 0, void 0, fu
     // Check if already a driver
     const existingDriver = yield driver_model_1.Driver.findOne({ user: userId });
     if (existingDriver) {
-        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, 'User is already registered as a driver');
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "User is already registered as a driver");
     }
     // Create driver profile
-    console.log(userId);
     const driver = yield driver_model_1.Driver.create({
         user: userId,
         licenseNumber,
         vehicleType,
         vehicleModel,
         vehiclePlate,
-        location
+        location,
     });
     return driver;
 });
 const getAllDrivers = () => __awaiter(void 0, void 0, void 0, function* () {
     const drivers = yield driver_model_1.Driver.find().populate({
-        path: 'user',
-        select: 'name phone'
+        path: "user",
+        select: "name phone",
     });
     return drivers;
 });
 const getRequestedDrivers = () => __awaiter(void 0, void 0, void 0, function* () {
     const drivers = yield driver_model_1.Driver.find({ status: driver_interface_1.STATUS.PENDING }).populate({
-        path: 'user',
-        select: 'name phone'
+        path: "user",
+        select: "name phone",
     });
     return drivers;
 });
 const updateDriver = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const updatedDriver = yield driver_model_1.Driver.findByIdAndUpdate(userId, payload, {
-        new: true
+        new: true,
     });
     if ((updatedDriver === null || updatedDriver === void 0 ? void 0 : updatedDriver.status) === driver_interface_1.STATUS.APPROVED) {
         yield user_model_1.User.findByIdAndUpdate(updatedDriver === null || updatedDriver === void 0 ? void 0 : updatedDriver.user, {
-            role: user_interface_1.Role.DRIVER
+            role: user_interface_1.Role.DRIVER,
         });
     }
     else {
         yield user_model_1.User.findByIdAndUpdate(updatedDriver === null || updatedDriver === void 0 ? void 0 : updatedDriver.user, {
-            role: user_interface_1.Role.RIDER
+            role: user_interface_1.Role.RIDER,
         });
     }
+    return updatedDriver;
+});
+const approveDriver = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const updatedDriver = yield driver_model_1.Driver.findByIdAndUpdate(userId, {
+        status: driver_interface_1.STATUS.APPROVED,
+    }, {
+        new: true,
+    });
+    if (!updatedDriver) {
+        throw new AppError_1.default(http_status_codes_1.default.NOT_FOUND, "Did not made any request by the user to be a rider.");
+    }
+    yield user_model_1.User.findByIdAndUpdate(updatedDriver.user, {
+        role: user_interface_1.Role.DRIVER,
+    });
     return updatedDriver;
 });
 exports.driverService = {
     registerDriver,
     getAllDrivers,
     updateDriver,
-    getRequestedDrivers
+    getRequestedDrivers,
+    approveDriver,
 };

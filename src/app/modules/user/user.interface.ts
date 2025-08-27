@@ -17,5 +17,6 @@ export interface IUser {
   password: string;
   role: Role;
   isBlocked?: boolean;
-  auths: [IAuthProvider]
+  auths: [IAuthProvider],
+  currentRide?: string
 }

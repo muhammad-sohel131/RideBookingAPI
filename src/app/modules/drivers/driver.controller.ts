@@ -28,6 +28,17 @@ const getAllDrivers = catchAsync(async (req: Request, res: Response) => {
     })
 })
 
+const getMyEarnings = catchAsync(async(req: Request, res: Response) => {
+    const user = req.user as JwtPayload
+    const myEarnings = await driverService.getMyEarnings(user.userId)
+
+    sendResponse(res, {
+        message: "Fetched Earning History",
+        success: true,
+        statusCode: httpStatus.OK,
+        data: myEarnings
+    })
+})
 const getRequestedDrivers = catchAsync(async (req: Request, res: Response) => {
     const drivers = await driverService.getRequestedDrivers()
 
@@ -67,5 +78,6 @@ export const driverController = {
     getAllDrivers,
     updateDriver,
     getRequestedDrivers,
-    approveDriver
+    approveDriver,
+    getMyEarnings
 }
