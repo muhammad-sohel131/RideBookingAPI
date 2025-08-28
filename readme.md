@@ -47,6 +47,9 @@ baseurl: https://ride-booking-api-ecru.vercel.app
 
 ---
 
+## Super Admin Credential
+ - SUPER_ADMIN_EMAIL=super@gmail.com
+ - SUPER_ADMIN_PASSWORD=12345678
 ## 📌 API Endpoints
 
 ### 🔑 Auth
@@ -76,6 +79,7 @@ baseurl: https://ride-booking-api-ecru.vercel.app
 |--------|------------------------------|----------------------------|
 | GET    | `/api/v1/driver`                | Get all drivers (admin)    |
 | GET    | `/api/v1/driver/pending-driver` | Get pending driver requests |
+| GET    | `/api/v1/driver/my-earnings` | Get completed rides to calculate  earning |
 | POST   | `/api/v1/driver/register`       | Apply as driver (rider)    |
 | PATCH  | `/api/v1/driver/approve/:userId` | Approve driver    |
 | PATCH  | `/api/v1/driver/:userId`        | Update driver details      |
@@ -85,7 +89,8 @@ baseurl: https://ride-booking-api-ecru.vercel.app
 ### 🚕 Rides
 | Method | Endpoint                   | Description                |
 |--------|----------------------------|----------------------------|
-| GET    | `/api/v1/ride`                | Get all rides              |
+| GET    | `/api/v1/ride`                | Get all rides (admin)              |
+| GET    | `/api/v1/ride/my-rides`                | Get completed rides for a specific rider               |
 | GET    | `/api/v1/ride/requested-rides`| Get rides requested (driver) |
 | POST   | `/api/v1/ride/create`         | Create new ride (rider)    |
 | PATCH  | `/api/v1/ride/update/:rideId` | Update ride status (Accept, Cancel..)        |
@@ -107,27 +112,20 @@ DB_URL=mongodb+srv://####@cluster0.jd7el.mongodb.net/###?retryWrites=true&w=majo
 PORT=5000
 
 NODE_ENV=development
-#jwt
 JWT_ACCESS_SECRET=...
 JWT_ACCESS_EXPIRES=1d
 
 JWT_REFRESH_SECRET=...
 JWT_REFRESH_EXPIRES=30d
 
-#hashPassword
 BCRYPT_SALT_ROUND=...
 
-#super admin
-SUPER_ADMIN_EMAIL=super@gmail.com
-SUPER_ADMIN_PASSWORD=12345678
-
-#google
 GOOGLE_CLIENT_ID=1
 GOOGLE_CLIENT_SECRET=
 GOOGLE_CALLBACK_URL=
 
-#express session
+express session
 EXPIRES_SESSION_SECRET=
 
-#Frontend URL
+Frontend URL
 FRONTEND_URL=http://localhost:5173

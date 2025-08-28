@@ -43,6 +43,24 @@ const userSchema = new mongoose_1.Schema({
     },
     auths: {
         type: [authProviderSchema]
+    },
+    currentRide: {
+        type: mongoose_1.Schema.Types.ObjectId || null,
+        ref: 'Ride',
+        default: null
     }
+}, {
+    toJSON: {
+        transform: (_doc, ret) => {
+            delete ret.password;
+            return ret;
+        },
+    },
+    toObject: {
+        transform: (_doc, ret) => {
+            delete ret.password;
+            return ret;
+        },
+    },
 });
 exports.User = (0, mongoose_1.model)('User', userSchema);

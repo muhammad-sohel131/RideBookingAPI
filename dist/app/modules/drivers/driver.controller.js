@@ -36,6 +36,16 @@ const getAllDrivers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 
         data: drivers
     });
 }));
+const getMyEarnings = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const myEarnings = yield driver_service_1.driverService.getMyEarnings(user.userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        message: "Fetched Earning History",
+        success: true,
+        statusCode: http_status_codes_1.default.OK,
+        data: myEarnings
+    });
+}));
 const getRequestedDrivers = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const drivers = yield driver_service_1.driverService.getRequestedDrivers();
     (0, sendResponse_1.sendResponse)(res, {
@@ -70,5 +80,6 @@ exports.driverController = {
     getAllDrivers,
     updateDriver,
     getRequestedDrivers,
-    approveDriver
+    approveDriver,
+    getMyEarnings
 };

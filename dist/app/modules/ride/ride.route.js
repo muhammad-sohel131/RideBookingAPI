@@ -10,6 +10,7 @@ const ride_validate_1 = require("./ride.validate");
 const router = (0, express_1.Router)();
 router.post("/create", (0, validateRequest_1.validateRequest)(ride_validate_1.createRideSchema), (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.rideController.createRide);
 router.patch("/update/:rideId", (0, validateRequest_1.validateRequest)(ride_validate_1.updateRideSchema), (0, checkAuth_1.checkAuth)(...Object.values(user_interface_1.Role)), ride_controller_1.rideController.updateRide);
-router.get("/", ride_controller_1.rideController.getRides);
+router.get("/", (0, checkAuth_1.checkAuth)(user_interface_1.Role.ADMIN, user_interface_1.Role.SUPER_ADMIN), ride_controller_1.rideController.getRides);
+router.get("/my-rides", (0, checkAuth_1.checkAuth)(user_interface_1.Role.RIDER), ride_controller_1.rideController.getMyRides);
 router.get("/requested-rides", (0, checkAuth_1.checkAuth)(user_interface_1.Role.DRIVER), ride_controller_1.rideController.getRequestedRides);
 exports.rideRoutes = router;

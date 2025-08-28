@@ -19,6 +19,8 @@ const user_model_1 = require("../user/user.model");
 const driver_interface_1 = require("./driver.interface");
 const driver_model_1 = require("./driver.model");
 const http_status_codes_1 = __importDefault(require("http-status-codes"));
+const ride_model_1 = require("../ride/ride.model");
+const ride_interface_1 = require("../ride/ride.interface");
 const registerDriver = (userId, payload) => __awaiter(void 0, void 0, void 0, function* () {
     const { licenseNumber, vehicleType, vehicleModel, vehiclePlate, location } = payload;
     const user = yield user_model_1.User.findById(userId);
@@ -51,6 +53,13 @@ const getAllDrivers = () => __awaiter(void 0, void 0, void 0, function* () {
     });
     return drivers;
 });
+const getMyEarnings = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const earningsHistory = yield ride_model_1.Ride.find({
+        driver: userId,
+        status: ride_interface_1.RideStatus.COMPLETED
+    });
+    return earningsHistory;
+});
 const getRequestedDrivers = () => __awaiter(void 0, void 0, void 0, function* () {
     const drivers = yield driver_model_1.Driver.find({ status: driver_interface_1.STATUS.PENDING }).populate({
         path: "user",
@@ -75,8 +84,11 @@ const updateDriver = (userId, payload) => __awaiter(void 0, void 0, void 0, func
     return updatedDriver;
 });
 const approveDriver = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedDriver = yield driver_model_1.Driver.findByIdAndUpdate(userId, {
+    const updatedDriver = yield driver_model_1.Driver.findOneAndUpdate({
+        user: userId
+    }, {
         status: driver_interface_1.STATUS.APPROVED,
+        isAvailable: true
     }, {
         new: true,
     });
@@ -94,4 +106,5 @@ exports.driverService = {
     updateDriver,
     getRequestedDrivers,
     approveDriver,
+    getMyEarnings
 };

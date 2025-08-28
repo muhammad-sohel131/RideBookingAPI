@@ -11,7 +11,7 @@ const RideSchema = new mongoose_1.Schema({
     },
     driver: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Driver'
+        ref: 'User'
     },
     pickupLocation: {
         lat: { type: Number, required: true },

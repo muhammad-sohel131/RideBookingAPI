@@ -19,7 +19,6 @@ const http_status_codes_1 = __importDefault(require("http-status-codes"));
 const ride_service_1 = require("./ride.service");
 const createRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
-    console.log(user.role);
     const ride = yield ride_service_1.rideService.createRide(user.userId, req.body);
     (0, sendResponse_1.sendResponse)(res, {
         statusCode: http_status_codes_1.default.CREATED,
@@ -46,6 +45,16 @@ const getRequestedRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(v
         data: ride
     });
 }));
+const getMyRides = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const myRides = yield ride_service_1.rideService.getMyRides(user.userId);
+    (0, sendResponse_1.sendResponse)(res, {
+        statusCode: http_status_codes_1.default.OK,
+        message: 'Retrieved My Rides.',
+        success: true,
+        data: myRides
+    });
+}));
 const updateRide = (0, catchAsync_1.catchAsync)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const rideId = req.params.rideId;
     const user = req.user;
@@ -62,5 +71,6 @@ exports.rideController = {
     createRide,
     getRides,
     updateRide,
-    getRequestedRides
+    getRequestedRides,
+    getMyRides
 };

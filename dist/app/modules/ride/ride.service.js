@@ -31,10 +31,16 @@ const createRide = (userId, payload) => __awaiter(void 0, void 0, void 0, functi
     if (user.isBlocked) {
         throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, 'Your account is blocked.');
     }
+    if (user.currentRide) {
+        throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You can not request for multiple rides at the same time.");
+    }
     const distance = (0, getDistanceInKm_1.getDistanceInKm)(payload.pickupLocation, payload.dropLocation);
     payload.fare = 50 * distance;
     payload.rider = userId;
     const ride = yield ride_model_1.Ride.create(payload);
+    yield user_model_1.User.findByIdAndUpdate(userId, {
+        currentRide: ride._id
+    });
     return ride;
 });
 const getRides = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,6 +50,10 @@ const getRides = () => __awaiter(void 0, void 0, void 0, function* () {
 const getRequestedRides = () => __awaiter(void 0, void 0, void 0, function* () {
     const rides = yield ride_model_1.Ride.find({ status: ride_interface_1.RideStatus.REQUESTED });
     return rides;
+});
+const getMyRides = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const myRides = yield ride_model_1.Ride.find({ rider: userId });
+    return myRides;
 });
 const updateRideStatus = (_a) => __awaiter(void 0, [_a], void 0, function* ({ rideId, user, payload, }) {
     var _b, _c, _d;
@@ -65,6 +75,9 @@ const updateRideStatus = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ri
     }
     if (role === user_interface_1.Role.RIDER && newRideStatus === ride_interface_1.RideStatus.CANCELLED) {
         const updatedRide = yield ride_model_1.Ride.findByIdAndUpdate(rideId, { status: ride_interface_1.RideStatus.CANCELLED, cancelledAt: Date.now() }, { new: true });
+        yield user_model_1.User.findByIdAndUpdate(user.userId, {
+            currentRide: null
+        });
         return updatedRide;
     }
     const driver = yield driver_model_1.Driver.findOne({ user: user.userId });
@@ -81,9 +94,9 @@ const updateRideStatus = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ri
         if (driver.currentRide) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not allowed to accept multiple rides at the same time.");
         }
-        yield driver_model_1.Driver.findByIdAndUpdate(driver._id, { currentRide: ride._id });
+        yield driver_model_1.Driver.findByIdAndUpdate(driver._id, { currentRide: ride._id, isAvailable: false });
         yield ride_model_1.Ride.findByIdAndUpdate(rideId, {
-            driver: driver._id,
+            driver: user.userId,
             status: ride_interface_1.RideStatus.ACCEPTED,
             acceptedAt: Date.now(),
         });
@@ -92,20 +105,26 @@ const updateRideStatus = (_a) => __awaiter(void 0, [_a], void 0, function* ({ ri
         if (((_b = ride.driver) === null || _b === void 0 ? void 0 : _b.toString()) !== user.userId) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not allowed for this action.");
         }
-        yield driver_model_1.Driver.findByIdAndUpdate(driver._id, { currentRide: null });
+        yield driver_model_1.Driver.findByIdAndUpdate(driver._id, { currentRide: null, isAvailable: true });
         yield ride_model_1.Ride.findByIdAndUpdate(rideId, {
             status: ride_interface_1.RideStatus.CANCELLED,
             cancelledAt: Date.now(),
+        });
+        yield user_model_1.User.findByIdAndUpdate(ride.rider, {
+            currentRide: null
         });
     }
     if (newRideStatus === ride_interface_1.RideStatus.COMPLETED) {
         if (((_c = ride.driver) === null || _c === void 0 ? void 0 : _c.toString()) !== user.userId) {
             throw new AppError_1.default(http_status_codes_1.default.BAD_REQUEST, "You are not allowed for this action.");
         }
-        yield driver_model_1.Driver.findByIdAndUpdate(user.userId, { currentRide: null });
+        yield driver_model_1.Driver.findByIdAndUpdate(user.userId, { currentRide: null, isAvailable: true });
         yield ride_model_1.Ride.findByIdAndUpdate(rideId, {
             status: ride_interface_1.RideStatus.COMPLETED,
             completedAt: Date.now(),
+        });
+        yield user_model_1.User.findByIdAndUpdate(ride.rider, {
+            currentRide: null
         });
     }
     if (newRideStatus === ride_interface_1.RideStatus.STARTED) {
@@ -125,5 +144,6 @@ exports.rideService = {
     createRide,
     getRides,
     updateRideStatus,
-    getRequestedRides
+    getRequestedRides,
+    getMyRides
 };

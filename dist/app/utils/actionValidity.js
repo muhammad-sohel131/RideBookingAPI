@@ -6,14 +6,15 @@ const actionValidity = (currentAction, newAction, role) => {
     const actions = {
         REQUESTED: {
             ACCEPTED: ['driver'],
-            CANCELLED: ['rider', 'driver']
+            CANCELLED: ['rider', 'super_admin', 'admin']
         },
         ACCEPTED: {
             STARTED: ['driver'],
-            CANCELLED: ['driver']
+            CANCELLED: ['driver', 'super_admin', 'admin']
         },
         STARTED: {
-            COMPLETED: ['driver']
+            COMPLETED: ['driver'],
+            CANCELLED: ['driver', 'super_admin', 'admin']
         },
         COMPLETED: [],
         CANCELLED: [],
