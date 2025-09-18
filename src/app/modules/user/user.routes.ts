@@ -8,6 +8,7 @@ import { updateUserSchema } from "./user.validate";
 const route = Router();
 
 route.get("/", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), userController.getAllUsers);
+route.get('/me', checkAuth(...Object.values(Role)), userController.getMe)
 route.post("/register", userController.createUser);
 route.patch(
   "/status/:userId",
