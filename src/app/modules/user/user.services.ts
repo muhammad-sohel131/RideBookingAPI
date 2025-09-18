@@ -39,8 +39,15 @@ const changeUserStatus = async (userId: string, payload: Partial<IUser>) => {
     return updatedUser
 }
 
+const getMe = async (userId: string) => {
+    const updatedUser = await User.findById(userId).select('-password')
+
+    return updatedUser
+}
+
 export const userServices = {
   createUser,
   getAllUsers,
-  changeUserStatus
+  changeUserStatus,
+  getMe
 };
