@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { catchAsync } from "../../utils/catchAsync"
 import { sendResponse } from "../../utils/sendResponse"
 import { userServices } from "./user.services"
+import { JwtPayload } from "jsonwebtoken"
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     const users = await userServices.getAllUsers()
@@ -38,8 +39,20 @@ const changeUserStatus = catchAsync(async (req: Request, res: Response) => {
         data: updatedUser
     })
 })
+const getMe = catchAsync(async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload
+    const updatedUser = await userServices.getMe(user.userId)
+    
+    sendResponse(res, {
+        success: true,
+        message: "Created Rider Account",
+        statusCode: 200,
+        data: updatedUser
+    })
+})
 export const userController = {
     getAllUsers,
     createUser,
-    changeUserStatus
+    changeUserStatus,
+    getMe
 }
